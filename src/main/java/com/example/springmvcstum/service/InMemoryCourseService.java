@@ -8,48 +8,53 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class InMemoryCourseService implements CourseService {
-    private final ConcurrentHashMap<Long, Course> store = new ConcurrentHashMap<>();
+
+    private final List<Course> courses = Collections.synchronizedList(new ArrayList<>());
     private final AtomicLong idGenerator = new AtomicLong(1);
-    private final List<String> classrooms = Arrays.asList("11A101", "17B202", "2303");
-    private final List<String> majors = Arrays.asList("计科", "软工", "平面设计");
 
     @Override
     public Course save(Course course) {
-        long id = idGenerator.getAndIncrement();
-        course.setId(id);
-        store.put(id, course);
+        course.setId(idGenerator.getAndIncrement());
+        courses.add(course);
         return course;
     }
 
     @Override
     public List<Course> findAll() {
-        return new ArrayList<>(store.values());
+        synchronized (courses) {
+            return new ArrayList<>(courses);
+        }
     }
 
     @Override
     public Optional<Course> findById(Long id) {
-        return Optional.ofNullable(store.get(id));
+        synchronized (courses) {
+            return courses.stream().filter(c -> c.getId().equals(id)).findFirst();
+        }
     }
 
     @Override
     public Course update(Long id, Course updated) {
-        updated.setId(id);
-        store.put(id, updated);
+        synchronized (courses) {
+            findById(id).ifPresent(existing -> {
+                courses.remove(existing);
+                courses.add(updated);
+            });
+        }
         return updated;
     }
 
     @Override
     public List<String> availableClassrooms() {
-        return Collections.unmodifiableList(classrooms);
+        return Arrays.asList("A101", "B202", "C303");
     }
 
     @Override
     public List<String> availableMajors() {
-        return Collections.unmodifiableList(majors);
+        return Arrays.asList("软件工程", "计算机科学", "信息安全");
     }
 }
