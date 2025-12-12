@@ -12,6 +12,11 @@
    - 登录页: http://localhost:8080/login （默认账号：admin / 123456）
    - 登录成功后跳转首页 `/home`
 
+### IDEA 启动方式（无 Spring Boot）
+- 项目不包含 `SpringmvcStumApplication` 之类的 Spring Boot 启动类，直接删除或忽略本地遗留的该文件即可。
+- 以 Maven 项目方式导入后，可使用 **Run/Debug Configurations → Maven** 创建配置，`Command line` 填写 `jetty:run`，点击运行即可启动。
+- 如需用 Tomcat，配置 Artifacts（war exploded）并指向 `src/main/webapp/WEB-INF/web.xml`，按传统 Servlet 方式部署运行。
+
 ## 主要功能
 - 登录/退出：固定账号验证，登录后跳转首页。
 - 首页：提供新增课程、查看课程列表入口。
