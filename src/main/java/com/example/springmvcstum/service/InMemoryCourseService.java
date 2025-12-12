@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class InMemoryCourseService implements CourseService {
     private final ConcurrentHashMap<Long, Course> store = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
-    private final List<String> classrooms = Arrays.asList("A101", "B202", "C303");
-    private final List<String> majors = Arrays.asList("Computer Science", "Business", "Design");
+    private final List<String> classrooms = Arrays.asList("11A101", "17B202", "2303");
+    private final List<String> majors = Arrays.asList("计科", "软工", "平面设计");
 
     @Override
     public Course save(Course course) {
