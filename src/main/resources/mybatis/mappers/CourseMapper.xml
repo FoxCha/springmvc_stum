@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springmvcstum.mapper.CourseMapper">
+    <resultMap id="courseResult" type="com.example.springmvcstum.model.Course">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="session_time_millis" property="sessionTimeMillis"/>
+        <result column="capacity" property="capacity"/>
+        <result column="classroom" property="classroom"/>
+        <result column="majors" property="majors" typeHandler="com.example.springmvcstum.mybatis.CommaSeparatedStringTypeHandler"/>
+        <result column="delivery_method" property="deliveryMethod"/>
+    </resultMap>
+
+    <sql id="baseColumns">id, name, description, session_time_millis, capacity, classroom, majors, delivery_method</sql>
+
+    <insert id="insert" parameterType="com.example.springmvcstum.model.Course" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO courses (name, description, session_time_millis, capacity, classroom, majors, delivery_method)
+        VALUES (#{name}, #{description}, #{sessionTimeMillis}, #{capacity}, #{classroom},
+                #{majors, typeHandler=com.example.springmvcstum.mybatis.CommaSeparatedStringTypeHandler}, #{deliveryMethod})
+    </insert>
+
+    <select id="findAll" resultMap="courseResult">
+        SELECT <include refid="baseColumns"/> FROM courses ORDER BY id DESC
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="courseResult">
+        SELECT <include refid="baseColumns"/> FROM courses WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="map">
+        UPDATE courses
+        SET name = #{course.name},
+            description = #{course.description},
+            session_time_millis = #{course.sessionTimeMillis},
+            capacity = #{course.capacity},
+            classroom = #{course.classroom},
+            majors = #{course.majors, typeHandler=com.example.springmvcstum.mybatis.CommaSeparatedStringTypeHandler},
+            delivery_method = #{course.deliveryMethod}
+        WHERE id = #{id}
+    </update>
+</mapper>
